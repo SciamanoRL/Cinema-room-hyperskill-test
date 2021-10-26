@@ -1,0 +1,133 @@
+package cinema;
+
+import java.util.*;
+
+public class Cinema {
+
+    public static void printStatistics(String[][] hall, boolean bigHall, int numOfSeats) {
+        int totalPrice = 0;
+        int count = 0;
+        int sum;
+        int half = (hall.length - 1) / 2;
+        if (numOfSeats > 60) {
+            sum = half * (hall[0].length - 1) * 10 + (hall.length - 1 - half) * (hall[0].length - 1) * 8;
+        }   else {
+            sum = numOfSeats * 10;
+        }
+        for (int i = 0; i < hall.length; i++) {
+            for (int j = 0; j < hall[0].length; j++) {
+                if (bigHall && i > half && hall[i][j].equals("B")) {
+                    totalPrice += 8;
+                    count++;
+                }   else if (hall[i][j].equals("B")){
+                    totalPrice += 10;
+                    count++;
+                }
+            }
+        }
+        float percent = (float) count * 100 / (float) numOfSeats;
+        System.out.printf("Number of purchased tickets: %d \n", count);
+        System.out.printf("Percentage: %.2f%c \n", percent, '%');
+        System.out.printf("Current income: $%d \n", totalPrice);
+        System.out.printf("Total income: $%d \n", sum);
+
+    }
+
+    public static void printTheSeats(String[][] hall, int a, int b) {
+        System.out.println("Cinema:");
+        for (int i = 0; i <= a; i++) {
+            for (int j = 0; j <= b; j++) {
+                if (i == 0 && j == 0) {
+                    System.out.print("  ");
+                }   else {
+                    System.out.print(hall[i][j] + " ");
+                }
+            }
+            System.out.println();
+        }
+        System.out.println();
+    }
+
+    public static boolean check(int yourRow, int yourSeat, String hall[][]) {
+        if (yourRow < 1 && yourSeat < 1 || yourRow > hall.length - 1 || yourSeat > hall[0].length - 1) {
+            System.out.println("Wrong input! \n");
+            return false;
+        }   else if (hall[yourRow][yourSeat] == "B") {
+            System.out.println("That ticket has already been purchased! \n");
+            return false;
+        }
+
+        return true;
+    }
+
+    public static void buyTicket(String[][] hall, boolean bigHall, int rows) {
+        Scanner s = new Scanner(System.in);
+        boolean checkPurchase = false;
+        int yourRow = 0;
+        int yourSeat = 0;
+        while (!checkPurchase) {
+            System.out.println("Enter a row number:");
+            yourRow = s.nextInt();
+            System.out.println("Enter a seat number in that row:");
+            yourSeat = s.nextInt();
+            checkPurchase = check(yourRow, yourSeat, hall);
+        }
+        int price = 10;
+        if (bigHall) {
+            int half1 = rows / 2;
+            if (yourRow > half1) {
+                price = 8;
+            }
+        }
+        System.out.println("Ticket price: $" + price);
+        hall[yourRow][yourSeat] = "B";
+    }
+
+
+    public static void main(String[] args) {
+        Scanner s = new Scanner(System.in);
+
+        System.out.println("Enter the number of rows:");
+        int rows = s.nextInt();
+        System.out.println("Enter the number of seats in each row:");
+        int seats = s.nextInt();
+        boolean bigHall;
+        int numOfSeats = rows * seats;
+        bigHall = numOfSeats > 60;
+        String[][] hall = new String[rows + 1][seats + 1];
+        for (int i = 0; i <= rows; i++) {
+            for (int j = 0; j <= seats; j++) {
+                if (i == 0) {
+                    hall[i][j] = String.valueOf(j);
+                }   else if (j == 0) {
+                    hall[i][j] = String.valueOf(i);
+                }   else {
+                    hall[i][j] = "S";
+                }
+            }
+        }
+        int choose = 1;
+        while (choose > 0) {
+            System.out.println("\n1. Show the seats");
+            System.out.println("2. Buy a ticket");
+            System.out.println("3. Statistics");
+            System.out.println("0. Exit");
+            choose = s.nextInt();
+            switch (choose) {
+                case 1:
+                    printTheSeats(hall, rows, seats);
+                    break;
+                case 2:
+                    buyTicket(hall, bigHall, rows);
+                    break;
+                case 3:
+                    printStatistics(hall, bigHall, numOfSeats);
+                    break;
+                case 0:
+                    break;
+                default:
+                    System.out.println("Try another number");
+            }
+        }
+    }
+}
